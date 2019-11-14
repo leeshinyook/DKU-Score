@@ -2,9 +2,9 @@
 
 desktop-web
 ------
-1. 통계자료 컴포넌트 - Score.vue
-2. 서비스이용약관 모달 - ScoreAgreement.vue
-3. 로그인 컴포넌트 - ScoreLogin.vue
+1. Score.vue - 통계자료 컴포넌트
+2. ScoreAgreement.vue - 서비스이용약관 모달
+3. ScoreLogin.vue - 로그인 컴포넌트
 
 
 api-server
