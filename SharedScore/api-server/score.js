@@ -57,7 +57,7 @@ router.post("/", middle.requireLoggedIn, async (req, res) => {
     .catch(err => console.log(err));
   if (!$("#ltrClGrInpListTbl")) res.json(false);
   const docs = [];
-  $("#ltrClGrInpListTbl").each(function (i) { // 크롤링시작 (chreeio를 이용한다.)
+  $("#ltrClGrInpListTbl").each(function (i) { // 크롤링시작 (cheerio를 이용한다.)
     $(this)
       .find("tbody tr")
       .each(function (i) {
