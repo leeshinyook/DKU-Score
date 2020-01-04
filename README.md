@@ -196,7 +196,7 @@
     2. models/score.js - 서비스 데이터베이스(몽고디비) 스키마 설계
     3. score.js - score api-server
 
-- service.mov
-    -구현영상
+- service.mov : 구현영상
+   
 
 
