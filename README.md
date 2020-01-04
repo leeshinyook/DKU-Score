@@ -67,7 +67,91 @@
         - 이미 단쿠키에서 사용중인 크롤러이고, 추가적인 설치와 운영은 미래를 생각했을 때, 개발 및 보수가 어렵고 중복기능은 최대한 줄여야한다는 판단.
 
         
-        
+2. Aggregation 후 데이터넘겨주기
+
+    - 사실 프로젝트를 하면서 가장 어려웠던 부분이었다. 그 이유는? **비동기처리**
+    ``` javascript
+    function aggregatedList(classNo, lectureId) {
+    return new Promise((resolve, reject) => {
+    Score.aggregate([{
+          $match: {
+            lecture: lectureId,
+            class_no: classNo
+          }
+        },
+        {
+          $group: {
+            _id: {
+              lecture: "$lecture",
+              class_no: "$class_no",
+              course_name: "$course_name"
+            },
+            scores: {
+              $push: "$score"
+            },
+            // 여러 통계를 낸다.
+            avgscore: {
+              $avg: "$score"
+            },
+            maxscore: {
+              $max: "$score"
+            },
+            minscore: {
+              $min: "$score"
+            },
+            count: {
+              $sum: 1
+            }
+          }
+        }
+      ])
+      .exec((err, docs) => {
+        if (err) return reject(err);
+        resolve(docs);
+      })
+      .catch(reject);
+     });
+    }
+    ```
+    ``` javascript
+    router.get("/scores", middle.requireLoggedIn, (req, res) => {
+      // aggregate
+      Score.findByUser(req.user._id) // 회원이 듣는 과목만 list에 담는다.
+        .exec((err, docs) => {
+          if (err || !docs) {
+            return res.sendStatus(404);
+          } else {
+            list = docs;
+          }
+        })
+        .then(() => {
+          async function handOverList(list) {
+            const promises = list.map(item => // map메소드를 이용해 list의 모든요소 접근
+              aggregatedList(item.class_no, item.lecture)
+            );
+            // wait until all promises are resolved 모든 promises가 resolve될때 까지 기다린다. 비동기처리.
+            await Promise.all(promises).then(data => {
+              res.json(data);
+            });
+          }
+          handOverList(list);
+        });
+
+    });
+
+    ```
+    Aggregation이 비동기로 처리되다 보니, 모든 데이터를 가져오는 처리가 끝난후, 프론트로 데이터를 넘겨주어야한다. 이 과정에서 나는<br> 
+    ES6, Promise에 관한 문법이 익숙지 않았고, 많은 고민의 시간을 보냈다. 끝내 내린 결론은 1차적으로 async, await문법을 통해 handOverList함수가 동기적으로     작동하도록 처리를 하고 이 여러개의 promise들을 promises에 담아 Promise.all을 통해 처리를 하는 판단을 내렸다.
+
+
+
+
+6.배포
+-------
+    기존 단쿠키서버인 AWS가 이용되었다.
+2019년 2학기 중간고사를 배포를 기점으로 정말 감사하게 1500명의 학우들이 이용하였고, 구글애널리틱스에는 7200
+
+
 
 desktop-web
 ------
