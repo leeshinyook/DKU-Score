@@ -33,7 +33,7 @@
 4.기술스택
 ----------
 - Main: **Vue.js** **Node.js** **MongoDB**
-- Module: **Cheerio** **Axios** **Mongoose** **Express** **LineChart** 
+- Module: **Cheerio** **Axios** **Mongoose** **Express** **Vue-Chart** 
 
 5.개발과정
 -----
